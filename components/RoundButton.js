@@ -7,7 +7,7 @@ export const RoundButton = (props) => {
   return (
     <TouchableOpacity
       style={styles.roundButton}
-      activeOpacity={0.8}
+      activeOpacity={0.95}
       onPress={props.buttonHandler ? props.buttonHandler : addButtonHandler}
     >
       <MaterialIcons

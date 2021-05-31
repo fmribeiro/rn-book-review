@@ -37,25 +37,21 @@ const SearchScreen = (props) => {
   }, [dispatch, bookTitle]);
 
   useEffect(() => {
-    console.log("useEffect");
     if (bookTitle.trim().length > 3) {
       searchReviews().then(() => {});
     }
   }, [dispatch, bookTitle]);
 
   useEffect(() => {
-    console.log("unsubscribing...");
     const unsubscribe = props.navigation.addListener("focus", () => {});
     return unsubscribe;
   }, [searchReviews]);
 
   const textChangeHandler = (book) => {
-    console.log(`textChangeHandler: ${bookTitle}`);
     setBookTitle(book);
   };
 
   const onClickHandler = (review) => {
-    console.log(`onClickHandler: ${bookTitle}`);
     props.navigation.navigate("ReviewDetails", { review });
   };
 

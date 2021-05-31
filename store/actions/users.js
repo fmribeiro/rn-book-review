@@ -1,7 +1,9 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { User } from "../../models/User";
 import { convertObjetIdToDate } from "../../utils/Utils";
 
 export const GET_USERS = "GET_USERS";
+export const GET_USER = "GET_USER";
 
 export const fetchUsers = () => {
   return async (dispatch, getState) => {
@@ -16,7 +18,6 @@ export const fetchUsers = () => {
       let resData = await response.json();
       resData = resData.users;
       const users = [];
-      //   console.log(resData);
 
       for (const key in resData) {
         users.push(
@@ -32,13 +33,97 @@ export const fetchUsers = () => {
           )
         );
       }
-      // console.log(`fetch reviews${JSON.stringify(reviews)}`);
+
       dispatch({
         type: GET_USERS,
-        users: users,
+        users: users.sort((user) => user.books),
       });
     } catch (error) {
       throw error;
     }
   };
+};
+
+export const saveUser = (user, token) => {
+  return async (dispatch, getState) => {
+    console.log("saveUser");
+
+    try {
+      const { name, nickname, idToken } = user;
+
+      const saveNewUser = await fetch(
+        "https://whispering-springs-63743.herokuapp.com/book-review/users",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ name, nickname, idToken }),
+        }
+      );
+
+      if (!saveNewUser.ok) {
+        throw new Error("something went wrong");
+      } else {
+        const saveNewUserResponse = await saveNewUser.json();
+        // const { id, name, nickname, idToken } = response;
+        saveUserInfoToStorage(saveNewUserResponse);
+
+        dispatch({
+          type: GET_USER,
+          user: { name, nickname, idToken },
+        });
+      }
+    } catch (error) {
+      throw error;
+    }
+  };
+};
+
+export const getUser = (userId) => {
+  return async (dispatch, getState) => {
+    try {
+      const response = await fetch(
+        `https://whispering-springs-63743.herokuapp.com/book-review/users/idToken/${userId}`
+      );
+
+      if (!response.ok) {
+        throw new Error("something went wrong");
+      } else {
+        const loggedUser = await response.json();
+        saveUserInfoToStorage(loggedUser);
+
+        const user = new User(
+          loggedUser.id,
+          loggedUser.name,
+          loggedUser.nickname,
+          loggedUser.idToken,
+          null,
+          null,
+          null,
+          null
+        );
+
+        dispatch({
+          type: GET_USER,
+          user: user,
+        });
+      }
+    } catch (error) {
+      throw error;
+    }
+  };
+};
+
+const saveUserInfoToStorage = (user) => {
+  AsyncStorage.setItem(
+    "loggedUser",
+    JSON.stringify({
+      id: user.id,
+      name: user.name,
+      nickname: user.nickname,
+      idToken: user.idToken,
+    })
+  );
 };

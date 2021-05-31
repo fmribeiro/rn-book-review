@@ -1,44 +1,50 @@
 import { MaterialIcons } from "@expo/vector-icons";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useCallback } from "react";
-import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  FlatList,
+  Image,
+  StyleSheet,
+  TouchableNativeFeedback,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import { useDispatch, useSelector } from "react-redux";
 
 import Card from "../components/Card";
 import CustomText from "../components/CustomText";
 import CustomHeaderButton from "../components/HeaderButton";
+import SimpleFloatingActionButton from "../components/SimpleFloatingActionButton";
 import Colors from "../constants/Colors";
 import * as reviewActions from "../store/actions/reviews";
 
 const BottomCardButtons = (props) => {
   return (
-    <View style={styles.buttonContainer}>
-      <TouchableOpacity onPress={props.onDetails} style={styles.button}>
-        <MaterialIcons name="preview" size={23} style={styles.icon} />
-      </TouchableOpacity>
+    <View>
+      {false && (
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity onPress={props.onDetails} style={styles.button}>
+            <MaterialIcons name="preview" size={23} style={styles.icon} />
+          </TouchableOpacity>
 
-      {props.isUserLogged && (
-        <TouchableOpacity onPress={props.onFavorite} style={styles.button}>
-          <MaterialIcons
-            name="favorite-outline"
-            size={23}
-            color={Colors.accentColor}
-            style={styles.icon}
-          />
-        </TouchableOpacity>
-      )}
+          <TouchableOpacity onPress={props.onFavorite} style={styles.button}>
+            <MaterialIcons
+              name="favorite-outline"
+              size={23}
+              color={Colors.accentColor}
+              style={styles.icon}
+            />
+          </TouchableOpacity>
 
-      {props.isUserLogged && (
-        <TouchableOpacity onPress={props.onEdit} style={styles.button}>
-          <MaterialIcons name="edit" size={23} style={styles.icon} />
-        </TouchableOpacity>
-      )}
+          <TouchableOpacity onPress={props.onEdit} style={styles.button}>
+            <MaterialIcons name="edit" size={23} style={styles.icon} />
+          </TouchableOpacity>
 
-      {props.isUserLogged && (
-        <TouchableOpacity onPress={props.onRemove} style={styles.button}>
-          <MaterialIcons name="delete" size={23} style={styles.icon} />
-        </TouchableOpacity>
+          <TouchableOpacity onPress={props.onRemove} style={styles.button}>
+            <MaterialIcons name="delete" size={23} style={styles.icon} />
+          </TouchableOpacity>
+        </View>
       )}
     </View>
   );
@@ -80,7 +86,6 @@ const ReviewScreen = (props) => {
   useEffect(() => {
     setIsLoading(true);
     loadReviews().then(() => {
-      // console.log(`reviews: ${reviews}`);
       setIsLoading(false);
     });
   }, [dispatch, loadReviews]);
@@ -100,35 +105,67 @@ const ReviewScreen = (props) => {
     props.navigation.navigate("AddEditReview");
   };
 
+  const onClickHandler = (review) => {
+    props.navigation.navigate("ReviewDetails", { review });
+  };
+
+  //http://books.google.com/books/content?id=OVAtAAAAYAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api
+  //"https://images.unsplash.com/photo-1471970394675-613138e45da3?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Nnx8cmV2aWV3fGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=60"
   return (
-    <FlatList
-      onRefresh={loadReviews}
-      refreshing={isRefreshing}
-      data={reviews}
-      keyExtractor={(item) => item.id}
-      renderItem={(itemData) => (
-        <Card style={styles.card}>
-          <View style={styles.reviewTextContainer}>
-            <CustomText style={styles.title}>
-              {itemData.item.bookTitle}
-            </CustomText>
-            <CustomText numberOfLines={10}>{itemData.item.review}</CustomText>
-          </View>
+    <View>
+      <FlatList
+        onRefresh={loadReviews}
+        refreshing={isRefreshing}
+        data={reviews}
+        keyExtractor={(item) => item.id}
+        renderItem={(itemData) => (
+          <Card style={styles.card}>
+            <TouchableNativeFeedback
+              onPress={() => {
+                onClickHandler(itemData.item);
+              }}
+            >
+              <View>
+                <View style={{ alignItems: "center", marginBottom: 5 }}>
+                  <Image
+                    style={{
+                      width: "100%",
+                      height: 300,
+                      borderRadius: 3,
+                    }}
+                    source={{
+                      uri: "https://images.unsplash.com/photo-1471970394675-613138e45da3?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Nnx8cmV2aWV3fGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=60",
+                    }}
+                  />
+                </View>
 
-          <BottomCardButtons
-            isUserLogged={false}
-            onDetails={() => {
-              reviewDetailsHandler(itemData.item);
-            }}
-          />
+                <View style={styles.reviewTextContainer}>
+                  <CustomText style={styles.title}>
+                    {itemData.item.bookTitle}
+                  </CustomText>
+                  <CustomText numberOfLines={10}>
+                    {itemData.item.review}
+                  </CustomText>
+                </View>
 
-          <BottomCardInfo
-            date={itemData.item.insertDate}
-            loggedUser={itemData.item.user.nickname}
-          />
-        </Card>
-      )}
-    />
+                <BottomCardButtons
+                  isUserLogged={true}
+                  onDetails={() => {
+                    reviewDetailsHandler(itemData.item);
+                  }}
+                />
+
+                <BottomCardInfo
+                  date={itemData.item.insertDate}
+                  loggedUser={itemData.item.user.nickname}
+                />
+              </View>
+            </TouchableNativeFeedback>
+          </Card>
+        )}
+      />
+      <SimpleFloatingActionButton buttonHandler={addReviewHandler} />
+    </View>
   );
 };
 
@@ -202,27 +239,3 @@ const styles = StyleSheet.create({
 });
 
 export default ReviewScreen;
-
-// <View>
-// <ScrollView style={{ height: "100%" }}>
-//   <View>
-//     <Card style={styles.card}>
-//       <View style={styles.reviewTextContainer}>
-//         <CustomText style={styles.title}>{review.title}</CustomText>
-//         <CustomText numberOfLines={10}>{review.text}</CustomText>
-//       </View>
-
-//       <BottomCardButtons
-//         isUserLogged={false}
-//         onDetails={() => {
-//           reviewDetailsHandler();
-//         }}
-//       />
-
-//       <BottomCardInfo date="22/02/2021 18:09" loggedUser="loggedUser72" />
-//     </Card>
-//   </View>
-// </ScrollView>
-
-// <SimpleFloatingActionButton buttonHandler={addReviewHandler} />
-// </View>

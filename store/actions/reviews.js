@@ -18,7 +18,6 @@ export const fetchReviews = () => {
       let resData = await response.json();
       resData = resData.reviews;
       const reviews = [];
-      // console.log(resData);
 
       for (const key in resData) {
         reviews.push(
@@ -40,7 +39,6 @@ export const fetchReviews = () => {
           )
         );
       }
-      // console.log(`fetch reviews${JSON.stringify(reviews)}`);
       dispatch({
         type: GET_REVIEWS,
         reviews: reviews,
@@ -65,7 +63,6 @@ export const searchReviews = (bookTitle) => {
         console.log("something went wrong");
       } else {
         let resData = await response.json();
-        // console.log(resData);
 
         for (const key in resData) {
           reviews.push(
@@ -82,13 +79,42 @@ export const searchReviews = (bookTitle) => {
           );
         }
       }
-      // console.log(`fetch reviews${JSON.stringify(reviews)}`);
       dispatch({
         type: SEARCH_REVIEWS,
         searchReviews: reviews,
       });
     } catch (error) {
       throw error;
+    }
+  };
+};
+
+export const saveReview = (review, token) => {
+  console.log(`saveReview: ${JSON.stringify(review)}`);
+  console.log(`token: ${JSON.stringify(token)}`);
+
+  return async (dispatch) => {
+    let resData;
+    const response = await fetch(
+      "https://whispering-springs-63743.herokuapp.com/book-review/reviews",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(review),
+      }
+    );
+
+    if (!response.ok) {
+      const errorResData = await response.json();
+      console.log(`errorMessage: ${JSON.stringify(errorResData)}`);
+      let message = "Something went wrong";
+      throw new Error(message);
+    } else {
+      resData = await response.json();
+      console.log(`resData: ${JSON.stringify(resData)}`);
     }
   };
 };

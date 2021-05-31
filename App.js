@@ -11,6 +11,10 @@ import authReducer from "./store/reducers/auth";
 import booksReducer from "./store/reducers/books";
 import reviewsReducer from "./store/reducers/reviews";
 import usersReducer from "./store/reducers/users";
+import { LogBox } from "react-native";
+
+//ignora a warning do tempo de sessao
+LogBox.ignoreLogs(["Setting a timer"]);
 
 const rootReducer = combineReducers({
   reviews: reviewsReducer,
