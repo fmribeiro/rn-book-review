@@ -1,7 +1,8 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as authActions from "../store/actions/auth";
+import * as reviewActions from "../store/actions/reviews";
 import { View } from "react-native";
 import { ActivityIndicator } from "react-native";
 import Colors from "../constants/Colors";
@@ -34,6 +35,20 @@ const StartupScreen = (props) => {
 
     tryLogin();
   }, [dispatch]);
+
+  //carrega as reviews ao iniciar, inicia o backend antes de abrir a aplicacao
+  const loadReviews = useCallback(async () => {
+    console.log("start backend on startup...");
+    try {
+      await dispatch(reviewActions.fetchReviews());
+    } catch (error) {
+      console.log("Erro ao iniciar o backend");
+    }
+  }, [dispatch]);
+
+  useEffect(() => {
+    loadReviews();
+  }, [dispatch, loadReviews]);
 
   return (
     <View>

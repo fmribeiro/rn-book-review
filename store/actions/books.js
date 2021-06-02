@@ -13,9 +13,15 @@ export const fetchBooks = () => {
       const response = await fetch(
         "https://whispering-springs-63743.herokuapp.com/book-review/books/page/0/size/10"
       );
+
       if (!response.ok) {
+        dispatch({
+          type: FETCH_BOOKS,
+          books: [],
+        });
         throw new Error("something went wrong");
       }
+
       let resData = await response.json();
       resData = resData.books;
       const books = [];
@@ -43,6 +49,62 @@ export const fetchBooks = () => {
               convertObjetIdToDate(resData[key].id),
               null
             )
+          )
+        );
+      }
+      dispatch({
+        type: FETCH_BOOKS,
+        books: books,
+      });
+    } catch (error) {
+      throw error;
+    }
+  };
+};
+
+export const fetchUserBooks = (id, idToken) => {
+  return async (dispatch, getState) => {
+    console.log("fetchUserBooks");
+    try {
+      const response = await fetch(
+        `https://whispering-springs-63743.herokuapp.com/book-review/books/user/${id}/readStatus/lido`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${idToken}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        console.log(JSON.stringify(response));
+        dispatch({
+          type: FETCH_BOOKS,
+          books: books,
+        });
+        throw new Error("something went wrong");
+      }
+      let resData = await response.json();
+      // resData = resData.books;
+      const books = [];
+
+      for (const key in resData) {
+        books.push(
+          new Book(
+            resData[key].id,
+            resData[key].title,
+            resData[key].isbn,
+            resData[key].pageCount,
+            resData[key].authors,
+            resData[key].userId,
+            resData[key].readStatus,
+            resData[key].imagePath,
+            resData[key].description,
+            resData[key].publisher,
+            convertObjetIdToDate(resData[key].id),
+            resData[key].updateDate,
+            null
           )
         );
       }
@@ -116,7 +178,7 @@ export const fetchGoogleBooks = (bookTitle) => {
 // `/books/user/${this.utilsService.getLoggedUserId()}/readStatus/lido`;
 export const fetchReadBooks = (userId, token) => {
   return async (dispatch, getState) => {
-    console.log(`fetchReadBooks: ${userId}`);
+    // console.log(`fetchReadBooks: ${userId}`);
     try {
       const response = await fetch(
         `https://whispering-springs-63743.herokuapp.com/book-review/books/user/${userId}/readStatus/lido`,

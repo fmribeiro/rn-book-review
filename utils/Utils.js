@@ -9,6 +9,11 @@ export const convertObjetIdToDate = (objectId) => {
 };
 
 export const getCurrentUser = async () => {
-  const loggegUser = await AsyncStorage.getItem("loggedUser");
-  return JSON.parse(loggegUser);
+  const loggedUser = await AsyncStorage.getItem("loggedUser");
+  return JSON.parse(loggedUser);
+};
+
+export const getCurrentUserJSON = async () => {
+  const loggedUser = await AsyncStorage.getItem("loggedUser");
+  return loggedUser;
 };

@@ -49,6 +49,59 @@ export const fetchReviews = () => {
   };
 };
 
+export const fetchUserReviews = (id, idToken) => {
+  return async (dispatch, getState) => {
+    console.log("fetchUserReviews");
+    try {
+      const response = await fetch(
+        `https://whispering-springs-63743.herokuapp.com/book-review/reviews/user/${id}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${idToken}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        // console.log(`response: ${JSON.stringify(response)}`);
+        dispatch({
+          type: GET_REVIEWS,
+          reviews: [],
+        });
+        throw new Error("something went wrong");
+      } else {
+        // console.log(`response: ${JSON.stringify(response)}`);
+        let resData = await response.json();
+        // resData = resData.reviews;
+        const reviews = [];
+
+        for (const key in resData) {
+          reviews.push(
+            new Review(
+              resData[key].id,
+              resData[key].review,
+              convertObjetIdToDate(resData[key].id),
+              null,
+              null,
+              resData[key].bookTitle,
+              resData[key].likes,
+              null
+            )
+          );
+        }
+        dispatch({
+          type: GET_REVIEWS,
+          reviews: reviews,
+        });
+      }
+    } catch (error) {
+      throw error;
+    }
+  };
+};
+
 export const searchReviews = (bookTitle) => {
   return async (dispatch, getState) => {
     console.log(`searchReviews: ${bookTitle}`);

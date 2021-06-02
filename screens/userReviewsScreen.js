@@ -1,24 +1,31 @@
 import React, { useContext } from "react";
+import { View } from "react-native";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 
-import BooksList from "../components/BooksList";
 import CustomHeaderButton from "../components/HeaderButton";
-import * as bookActions from "../store/actions/books";
+import ReviewsList from "../components/reviewList";
+import * as reviewActions from "../store/actions/reviews";
 import { PageContext } from "../utils/page-context";
 
-const BooksScreen = (props) => {
+const MyReviewsScreen = (props) => {
   const [loggedUser] = useContext(PageContext);
 
-  const loadBooks = bookActions.fetchBooks();
+  const loadReviews = reviewActions.fetchUserReviews(
+    loggedUser.user.id,
+    loggedUser.authentication.token
+  );
 
   return (
-    <BooksList fetchBooksActions={loadBooks} navigation={props.navigation} />
+    <ReviewsList
+      fetchReviewsActions={loadReviews}
+      navigation={props.navigation}
+    />
   );
 };
 
-export const booksOptions = (navData) => {
+export const myReviewsScreenOptions = (navData) => {
   return {
-    headerTitle: "Meus livros",
+    headerTitle: "Minhas resenhas",
     headerLeft: () => (
       <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
         <Item
@@ -33,4 +40,4 @@ export const booksOptions = (navData) => {
   };
 };
 
-export default BooksScreen;
+export default MyReviewsScreen;

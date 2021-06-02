@@ -1,24 +1,27 @@
 import React, { useContext } from "react";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 
-import BooksList from "../components/BooksList";
 import CustomHeaderButton from "../components/HeaderButton";
-import * as bookActions from "../store/actions/books";
+import UsersList from "../components/UsersList";
+import * as userActions from "../store/actions/users";
 import { PageContext } from "../utils/page-context";
 
-const BooksScreen = (props) => {
+const UsersFollowingScreen = (props) => {
   const [loggedUser] = useContext(PageContext);
 
-  const loadBooks = bookActions.fetchBooks();
+  const usersFollowing = userActions.fetchFollowingUsers(
+    loggedUser.user.id,
+    loggedUser.authentication.token
+  );
 
   return (
-    <BooksList fetchBooksActions={loadBooks} navigation={props.navigation} />
+    <UsersList userActions={usersFollowing} navigation={props.navigation} />
   );
 };
 
-export const booksOptions = (navData) => {
+export const usersFollowingScreenOptions = (navData) => {
   return {
-    headerTitle: "Meus livros",
+    headerTitle: "Quem eu sigo",
     headerLeft: () => (
       <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
         <Item
@@ -33,4 +36,4 @@ export const booksOptions = (navData) => {
   };
 };
 
-export default BooksScreen;
+export default UsersFollowingScreen;

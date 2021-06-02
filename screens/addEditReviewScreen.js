@@ -16,16 +16,20 @@ const AddEditReviewScreen = (props) => {
   const loggedUser = useSelector((state) => state.users.user);
   const readBooks = useSelector((state) => state.books.readBooks);
   const [bookTitle, setBookTitle] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [review, setReview] = useState("");
   const dispatch = useDispatch();
 
   const loadReadBooks = useCallback(async () => {
     try {
+      setIsLoading(true);
       if (loggedUser.id && token) {
         await dispatch(bookActions.fetchReadBooks(loggedUser.id, token));
+        setIsLoading(false);
       }
     } catch (error) {
       console.log(error);
+      setIsLoading(false);
     }
   }, [dispatch]);
 
@@ -110,7 +114,7 @@ const AddEditReviewScreen = (props) => {
           </View>
         </View>
       )}
-      {!readBooks && (
+      {!readBooks && !isLoading && (
         <View style={styles.inputContainer}>
           <CustomText style={{ fontSize: 18 }}>
             É preciso adicionar um livro para incluir uma resenha.

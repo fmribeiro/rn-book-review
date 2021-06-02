@@ -117,7 +117,7 @@ const AuthScreen = (props) => {
     const { score, variations } = scorePassword(password);
     setScore(score);
 
-    if (password.length >= 8) {
+    if (isSignup && password.length >= 8) {
       const variationValidation = validPasswordVariation(variations);
       setError({ passwordValidation: variationValidation });
       // console.log(`variations: ${JSON.stringify(variationValidation)}`);
@@ -220,13 +220,15 @@ const AuthScreen = (props) => {
                 />
               </View>
 
-              <BarPasswordStrengthDisplay
-                password={password}
-                minLength={5}
-                style={{ marginVertical: 5 }}
-                labelVisible={false}
-                scoreLimit={100}
-              />
+              {isSignup && (
+                <BarPasswordStrengthDisplay
+                  password={password}
+                  minLength={5}
+                  style={{ marginVertical: 5 }}
+                  labelVisible={false}
+                  scoreLimit={100}
+                />
+              )}
 
               <View style={{ marginLeft: 10, marginBottom: 10 }}>
                 {error && error.password && (
@@ -293,7 +295,7 @@ const AuthScreen = (props) => {
               </TouchableOpacity>
             </View>
 
-            {/* adicionado para corrigir o problema do */}
+            {/* adicionado para corrigir o problema do prenchimento do cadastro*/}
             <View style={{ flex: 1 }} />
           </View>
         </TouchableWithoutFeedback>

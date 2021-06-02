@@ -2,49 +2,32 @@ import { NavigationContainer } from "@react-navigation/native";
 import React, { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
-import {
-  AuthNavigator,
-  DrawerNavigator,
-} from "../navigation/bookReviewNavigator";
+import { DrawerNavigator } from "../navigation/MainNavigator";
 import StartupScreen from "../screens/startupScreen";
-import { getCurrentUser } from "../utils/Utils";
+import { PageContext } from "../utils/page-context";
+import { AuthNavigator } from "./AuthNavigator";
 
 const AppNavigator = (props) => {
+  // const users = useSelector((state) => state.users);
+  const user = useSelector((state) => state.users.user);
+  const authentication = useSelector((state) => state.auth);
   const isAuth = useSelector((state) => !!state.auth.token);
-  const currentUser = useSelector((state) => state.users.user);
   const didTryAutoLogin = useSelector((state) => !!state.auth.didTryAutoLogin);
-  // const [loggedUser, setLoggedUser] = useState(currentUser);
+  const [loggedUser, setLoggedUser] = useState({ user, authentication });
 
   console.log(`isAuth: ${JSON.stringify(isAuth)}`);
-  // console.log(`loggedUserBefore: ${JSON.stringify(loggedUser)}`);
-  console.log(`currentUser: ${JSON.stringify(currentUser)}`);
-
-  // const getLoggedUser = useCallback(async () => {
-  //   await getCurrentUser().then((user) => {
-  //     if (isAuth) {
-  //       const { name, nickname, idToken } = currentUser;
-  //       setLoggedUser({ name, nickname, idToken });
-  //       console.log(`setLoggedUser: ${JSON.stringify(loggedUser)}`);
-  //     } else {
-  //       setLoggedUser({});
-  //     }
-  //   });
-  // }, [setLoggedUser, isAuth]);
-
-  // useEffect(() => {
-  //   getLoggedUser();
-  // }, [setLoggedUser]);
+  console.log(`currentUser: ${JSON.stringify(loggedUser)}`);
 
   return (
     //PageContext cria um contexto global que pode ser usado por toda aplicacao
     // const [loggedUser] = useContext(PageContext);
-    // <PageContext.Provider value={[loggedUser, setLoggedUser]}>
-    <NavigationContainer>
-      {isAuth && <DrawerNavigator user={currentUser} isAuth={isAuth} />}
-      {!isAuth && didTryAutoLogin && <AuthNavigator />}
-      {!isAuth && !didTryAutoLogin && <StartupScreen />}
-    </NavigationContainer>
-    // </PageContext.Provider>
+    <PageContext.Provider value={[loggedUser, setLoggedUser]}>
+      <NavigationContainer>
+        {isAuth && <DrawerNavigator user={loggedUser.user} isAuth={isAuth} />}
+        {!isAuth && didTryAutoLogin && <AuthNavigator />}
+        {!isAuth && !didTryAutoLogin && <StartupScreen />}
+      </NavigationContainer>
+    </PageContext.Provider>
   );
 };
 

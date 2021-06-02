@@ -44,6 +44,59 @@ export const fetchUsers = () => {
   };
 };
 
+export const fetchFollowingUsers = (userId, token) => {
+  return async (dispatch, getState) => {
+    console.log("fetchFollowingUsers");
+    try {
+      const response = await fetch(
+        `https://whispering-springs-63743.herokuapp.com/book-review/users/following/${userId}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (!response.ok) {
+        console.log(response);
+        dispatch({
+          type: GET_USERS,
+          users: [],
+        });
+        throw new Error("something went wrong");
+      }
+      {
+        // console.log(`response: ${JSON.stringify(response)}`);
+        let resData = await response.json();
+        // console.log(`response: ${JSON.stringify(resData)}`);
+        const users = [];
+
+        for (const key in resData) {
+          users.push(
+            new User(
+              resData[key].id,
+              resData[key].name,
+              resData[key].nickname,
+              null,
+              convertObjetIdToDate(resData[key].id),
+              resData[key].usersFollowing,
+              resData[key].books,
+              resData[key].reviews
+            )
+          );
+        }
+        dispatch({
+          type: GET_USERS,
+          users: users.sort((user) => user.books),
+        });
+      }
+    } catch (error) {
+      throw error;
+    }
+  };
+};
+
 export const saveUser = (user, token) => {
   return async (dispatch, getState) => {
     console.log("saveUser");
@@ -89,6 +142,10 @@ export const getUser = (userId) => {
       );
 
       if (!response.ok) {
+        dispatch({
+          type: GET_USER,
+          user: {},
+        });
         throw new Error("something went wrong");
       } else {
         const loggedUser = await response.json();
@@ -105,6 +162,7 @@ export const getUser = (userId) => {
           null
         );
 
+        console.log(`dispatchUser: ${JSON.stringify(user)}`);
         dispatch({
           type: GET_USER,
           user: user,

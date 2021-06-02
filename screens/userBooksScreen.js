@@ -6,19 +6,22 @@ import CustomHeaderButton from "../components/HeaderButton";
 import * as bookActions from "../store/actions/books";
 import { PageContext } from "../utils/page-context";
 
-const BooksScreen = (props) => {
+const UserBooksScreen = (props) => {
   const [loggedUser] = useContext(PageContext);
 
-  const loadBooks = bookActions.fetchBooks();
+  const loadBooks = bookActions.fetchUserBooks(
+    loggedUser.user.id,
+    loggedUser.authentication.token
+  );
 
   return (
     <BooksList fetchBooksActions={loadBooks} navigation={props.navigation} />
   );
 };
 
-export const booksOptions = (navData) => {
+export const userBooksOptions = (navData) => {
   return {
-    headerTitle: "Meus livros",
+    headerTitle: "Livros que eu li",
     headerLeft: () => (
       <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
         <Item
@@ -33,4 +36,4 @@ export const booksOptions = (navData) => {
   };
 };
 
-export default BooksScreen;
+export default UserBooksScreen;
