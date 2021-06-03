@@ -14,11 +14,14 @@ export const setDitTryAutoLogin = () => {
 };
 
 export const logout = () => {
-  console.log("logout");
-  clearLogoutTimer();
-  AsyncStorage.removeItem("userData");
-  AsyncStorage.removeItem("loggedUser");
-  return { type: LOGOUT };
+  return (dispatch) => {
+    console.log("logout");
+    dispatch(userActions.clearUserState());
+    clearLogoutTimer();
+    AsyncStorage.removeItem("userData");
+    AsyncStorage.removeItem("loggedUser");
+    dispatch({ type: LOGOUT });
+  };
 };
 
 const clearLogoutTimer = () => {

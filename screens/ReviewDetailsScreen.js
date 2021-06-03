@@ -52,6 +52,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontFamily: "roboto-bold",
     textAlign: "center",
+    textDecorationLine: "underline",
   },
   reviewTextContainer: {
     marginLeft: 10,

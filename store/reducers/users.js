@@ -13,6 +13,7 @@ export default (state = initialState, action) => {
         users: action.users,
       };
     case GET_USER:
+      // console.log(`REDUCER GET_USER: ${JSON.stringify(action.user)}`);
       return {
         ...state,
         user: action.user,

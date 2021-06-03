@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { useCallback } from "react";
 import {
   FlatList,
-  Image,
   StyleSheet,
   TouchableNativeFeedback,
   TouchableOpacity,
@@ -130,19 +129,6 @@ const ReviewsList = (props) => {
                   }}
                 >
                   <View>
-                    <View style={{ alignItems: "center", marginBottom: 5 }}>
-                      <Image
-                        style={{
-                          width: "100%",
-                          height: 300,
-                          borderRadius: 3,
-                        }}
-                        source={{
-                          uri: "https://images.unsplash.com/photo-1471970394675-613138e45da3?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Nnx8cmV2aWV3fGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=60",
-                        }}
-                      />
-                    </View>
-
                     <View style={styles.reviewTextContainer}>
                       <CustomText style={styles.title}>
                         {itemData.item.bookTitle}
@@ -246,3 +232,16 @@ const styles = StyleSheet.create({
 });
 
 export default ReviewsList;
+
+// <View style={{ alignItems: "center", marginBottom: 5 }}>
+// <Image
+//   style={{
+//     width: 150,
+//     height: 200,
+//     borderRadius: 3,
+//   }}
+//   source={{
+//     uri: "https://books.google.com/books/content?id=S1LZDwAAQBAJ&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api",
+//   }}
+// />
+// </View>

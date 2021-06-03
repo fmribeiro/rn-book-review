@@ -8,15 +8,32 @@ import { PageContext } from "../utils/page-context";
 import { AuthNavigator } from "./AuthNavigator";
 
 const AppNavigator = (props) => {
-  // const users = useSelector((state) => state.users);
-  const user = useSelector((state) => state.users.user);
-  const authentication = useSelector((state) => state.auth);
   const isAuth = useSelector((state) => !!state.auth.token);
+  const [loggedUser, setLoggedUser] = useState({});
+
+  //informacoes do usuario: nome, email
+  const users = useSelector((state) => state.users);
+  const [user, setUser] = useState(users?.user);
+  useEffect(() => {
+    setUser(users?.user);
+  }, [users]);
+
+  //informacoes da autenticacao no firebase: token
+  const authentication = useSelector((state) => state.auth);
+  const [authInfo, setAuthInfo] = useState(authentication?.token);
+  useEffect(() => {
+    setAuthInfo(authentication?.token);
+  }, [authentication]);
+
+  useEffect(() => {
+    setLoggedUser({ user, authentication: authInfo });
+  }, [user, authInfo]);
+
   const didTryAutoLogin = useSelector((state) => !!state.auth.didTryAutoLogin);
-  const [loggedUser, setLoggedUser] = useState({ user, authentication });
 
   console.log(`isAuth: ${JSON.stringify(isAuth)}`);
-  console.log(`currentUser: ${JSON.stringify(loggedUser)}`);
+  console.log(`loggedUser: ${JSON.stringify(loggedUser)}`);
+  // console.log(`currentUser: ${JSON.stringify(users.user)}`);
 
   return (
     //PageContext cria um contexto global que pode ser usado por toda aplicacao

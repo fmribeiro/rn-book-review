@@ -5,6 +5,16 @@ import { convertObjetIdToDate } from "../../utils/Utils";
 export const GET_USERS = "GET_USERS";
 export const GET_USER = "GET_USER";
 
+export const clearUserState = () => {
+  console.log("clearUserState");
+  return (dispatch) => {
+    dispatch({
+      type: GET_USER,
+      user: {},
+    });
+  };
+};
+
 export const fetchUsers = () => {
   return async (dispatch, getState) => {
     console.log("fetchUsers");
@@ -136,6 +146,7 @@ export const saveUser = (user, token) => {
 
 export const getUser = (userId) => {
   return async (dispatch, getState) => {
+    console.log("getUser");
     try {
       const response = await fetch(
         `https://whispering-springs-63743.herokuapp.com/book-review/users/idToken/${userId}`
@@ -162,10 +173,11 @@ export const getUser = (userId) => {
           null
         );
 
+        const { name, nickname, idToken } = user;
         console.log(`dispatchUser: ${JSON.stringify(user)}`);
         dispatch({
           type: GET_USER,
-          user: user,
+          user: { name, nickname, idToken },
         });
       }
     } catch (error) {

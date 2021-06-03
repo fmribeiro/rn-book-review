@@ -69,7 +69,7 @@ const AuthScreen = (props) => {
   }, [register]);
 
   const onSubmit = async (data) => {
-    console.log("onSubmit");
+    console.log("authenticateUser");
 
     await fieldsValidationSchema
       .validate(data, { abortEarly: false })

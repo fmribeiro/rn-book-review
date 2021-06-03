@@ -11,8 +11,7 @@ import CustomText from "../components/CustomText";
 import Colors from "../constants/Colors";
 import * as authActions from "../store/actions/auth";
 import { UserBooksNavigator } from "./BooksNavigator";
-import { MyReviewsNavigator } from "./ReviewsNavigator";
-import { searchReviewNavigator } from "./ReviewsNavigator";
+import { MyReviewsNavigator, searchReviewNavigator } from "./ReviewsNavigator";
 import BottomTabs from "./TabNavigator";
 import { UsersFollowingNavigator } from "./UsersNavigator";
 
